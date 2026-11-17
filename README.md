@@ -68,15 +68,12 @@ cafeteria_delivery/
 └── docs/                      # documentação de entrega
 ```
 
-## Publicar grátis (PythonAnywhere)
-1. Crie uma conta gratuita em https://www.pythonanywhere.com
-2. Em **Files**, envie a pasta do projeto compactada (.zip) e descompacte pelo console **Bash** com `unzip cafeteria_delivery.zip`
-3. No console Bash, rode `pip install --user flask`
-4. Em **Web → Add a new web app → Manual configuration → Python 3.x**
-5. No arquivo **WSGI** que aparece, apague o conteúdo e cole:
-   ```python
-   import sys
-   sys.path.insert(0, '/home/SEU_USUARIO/cafeteria_delivery')
-   from run import app as application
-   ```
-6. Clique em **Reload**. O endereço fica `https://SEU_USUARIO.pythonanywhere.com`, e é esse link que você manda para os colegas testarem.
+## Publicação (Render, plano gratuito)
+
+🌐 **Online:** https://cafeteria-gourmet-delivery.onrender.com
+
+[![Deploy no Render](https://render.com/images/deploy-to-render-button.svg)](https://render.com/deploy?repo=https://github.com/SophyaDamiazo/cafeteria-gourmet-delivery)
+
+O arquivo [`render.yaml`](render.yaml) já traz toda a configuração: Python 3.12, Gunicorn e uma `SECRET_KEY` gerada automaticamente. Cada `git push` no GitHub publica a versão nova sozinho.
+
+> No plano gratuito o servidor "dorme" depois de 15 minutos sem acesso, e o **primeiro acesso depois disso leva uns 50 segundos** pra carregar. Quando ele reinicia, o banco SQLite volta aos dados iniciais, mas os usuários de teste e o cardápio são recriados automaticamente.

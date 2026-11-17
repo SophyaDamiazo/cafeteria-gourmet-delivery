@@ -1,0 +1,13 @@
+# Deploy gratuito no Render (https://render.com) - Blueprint
+services:
+  - type: web
+    name: cafeteria-gourmet-delivery
+    runtime: python
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    startCommand: gunicorn run:app --bind 0.0.0.0:$PORT --workers 1
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.12.7
+      - key: SECRET_KEY
+        generateValue: true
