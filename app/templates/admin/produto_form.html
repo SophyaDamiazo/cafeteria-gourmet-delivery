@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block titulo %}{{ 'Novo produto' if novo else 'Editar produto' }}{% endblock %}
+{% block conteudo %}
+<div class="card form-card">
+  <h1>{{ 'Novo produto' if novo else 'Editar produto' }}</h1>
+  <form method="post">
+    <label>Nome
+      <input name="nome" value="{{ produto.nome or '' }}" required>
+    </label>
+    <label>Categoria
+      <select name="categoria_id" required>
+        {% for c in categorias %}
+          <option value="{{ c.id }}" {% if (produto.categoria_id|string) == (c.id|string) %}selected{% endif %}>{{ c.icone }} {{ c.nome }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <label>Descrição
+      <textarea name="descricao" rows="3">{{ produto.descricao or '' }}</textarea>
+    </label>
+    <label>Preço (R$)
+      <input name="preco" inputmode="decimal" value="{{ produto.preco or '' }}" required placeholder="12,90">
+    </label>
+    <button class="btn btn-bloco" type="submit">Salvar</button>
+  </form>
+  <p class="nota"><a href="{{ url_for('admin.produtos') }}">← Voltar</a></p>
+</div>
+{% endblock %}

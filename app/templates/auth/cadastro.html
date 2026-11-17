@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+{% block titulo %}Criar conta{% endblock %}
+{% block conteudo %}
+<div class="card form-card">
+  <h1>Criar conta</h1>
+  <form method="post" data-validar-senha>
+    <label>Nome completo
+      <input name="nome" value="{{ form.nome or '' }}" required minlength="3" autocomplete="name">
+    </label>
+    <label>E-mail
+      <input type="email" name="email" value="{{ form.email or '' }}" required autocomplete="email">
+    </label>
+    <label>Telefone (com DDD)
+      <input name="telefone" value="{{ form.telefone or '' }}" required placeholder="(11) 99999-9999" data-mascara-telefone autocomplete="tel">
+    </label>
+    <label>Endereço de entrega
+      <input name="endereco" value="{{ form.endereco or '' }}" required minlength="8" placeholder="Rua, número, bairro" autocomplete="street-address">
+    </label>
+    <div class="linha">
+      <label>Senha
+        <input type="password" name="senha" required minlength="6" autocomplete="new-password">
+      </label>
+      <label>Confirmar senha
+        <input type="password" name="confirmar_senha" required minlength="6" autocomplete="new-password">
+      </label>
+    </div>
+    <small class="ajuda">A senha precisa ter pelo menos 6 caracteres.</small>
+    <button class="btn btn-bloco" type="submit">Cadastrar</button>
+  </form>
+  <p class="nota">Já tem conta? <a href="{{ url_for('auth.login') }}">Entrar</a></p>
+</div>
+{% endblock %}

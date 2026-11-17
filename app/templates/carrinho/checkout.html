@@ -1,0 +1,61 @@
+{% extends 'base.html' %}
+{% block titulo %}Finalizar pedido{% endblock %}
+{% block conteudo %}
+<h1>Finalizar pedido</h1>
+<form method="post" class="duas-colunas" id="form-checkout">
+  <div class="card">
+    <h2>1. Entrega</h2>
+    <label>Endereço de entrega
+      <input name="endereco" value="{{ form.endereco or '' }}" required minlength="8">
+    </label>
+    <label class="check"><input type="checkbox" name="salvar_endereco" value="1"> Salvar como meu endereço padrão</label>
+    <label>Observação (opcional)
+      <input name="observacao" value="{{ form.observacao or '' }}" maxlength="255" placeholder="Ex.: sem açúcar, interfone 12">
+    </label>
+
+    <h2>2. Pagamento</h2>
+    {% set forma = form.forma_pagamento or 'PIX' %}
+    <div class="opcoes-pagamento" role="radiogroup">
+      <label class="opcao"><input type="radio" name="forma_pagamento" value="PIX" {% if forma == 'PIX' %}checked{% endif %}> PIX</label>
+      <label class="opcao"><input type="radio" name="forma_pagamento" value="Cartao" {% if forma == 'Cartao' %}checked{% endif %}> Cartão de crédito</label>
+      <label class="opcao"><input type="radio" name="forma_pagamento" value="Dinheiro" {% if forma == 'Dinheiro' %}checked{% endif %}> Dinheiro na entrega</label>
+    </div>
+
+    <div class="pag-detalhe" data-forma="PIX">
+      <p class="ajuda">O código PIX é gerado e aprovado na hora (pagamento simulado para fins acadêmicos).</p>
+    </div>
+    <div class="pag-detalhe" data-forma="Cartao">
+      <label>Número do cartão
+        <input name="cartao_numero" inputmode="numeric" placeholder="0000 0000 0000 0000" data-mascara-cartao autocomplete="off">
+      </label>
+      <div class="linha">
+        <label>Validade
+          <input name="cartao_validade" placeholder="MM/AA" maxlength="5" data-mascara-validade autocomplete="off">
+        </label>
+        <label>CVV
+          <input name="cartao_cvv" inputmode="numeric" maxlength="4" autocomplete="off">
+        </label>
+      </div>
+      <p class="ajuda">Para testar use 4111 1111 1111 1111. Guardamos apenas os 4 últimos dígitos.</p>
+    </div>
+    <div class="pag-detalhe" data-forma="Dinheiro">
+      <label>Troco para (opcional)
+        <input name="troco_para" inputmode="decimal" placeholder="Ex.: 50,00" value="{{ form.troco_para or '' }}">
+      </label>
+    </div>
+  </div>
+
+  <aside class="card resumo">
+    <h2>Seu pedido</h2>
+    {% for i in itens %}
+      <p><span>{{ i.quantidade }}× {{ i.produto.nome }}</span><span>{{ i.subtotal|moeda }}</span></p>
+    {% endfor %}
+    <hr>
+    <p><span>Subtotal</span><span>{{ subtotal|moeda }}</span></p>
+    <p><span>Taxa de entrega</span><span>{{ taxa|moeda }}</span></p>
+    <p class="total"><span>Total</span><span>{{ total|moeda }}</span></p>
+    <button class="btn btn-bloco" type="submit" data-carregando="Processando...">Confirmar e pagar</button>
+    <a href="{{ url_for('carrinho.ver') }}">← Voltar ao carrinho</a>
+  </aside>
+</form>
+{% endblock %}

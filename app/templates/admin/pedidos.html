@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block titulo %}Painel de pedidos{% endblock %}
+{% block conteudo %}
+<h1>Painel de pedidos</h1>
+<nav class="filtros">
+  <a class="chip {% if not status_atual %}ativo{% endif %}" href="{{ url_for('admin.pedidos') }}">Todos</a>
+  {% for s in todos_status %}
+    <a class="chip {% if status_atual == s %}ativo{% endif %}" href="{{ url_for('admin.pedidos', status=s) }}">{{ s }}</a>
+  {% endfor %}
+</nav>
+{% if pedidos %}
+<div class="card">
+  <table class="tabela">
+    <thead><tr><th>#</th><th>Cliente</th><th>Data</th><th>Total</th><th>Pagamento</th><th>Status</th><th>Ações</th></tr></thead>
+    <tbody>
+    {% for p in pedidos %}
+      {% set prox = proximo(p.status) %}
+      <tr>
+        <td><a href="{{ url_for('pedidos.detalhe', pedido_id=p.id) }}">#{{ p.id }}</a></td>
+        <td>{{ p.cliente_nome }}</td>
+        <td>{{ p.data_pedido[8:10] }}/{{ p.data_pedido[5:7] }} {{ p.data_pedido[11:16] }}</td>
+        <td>{{ p.valor_total|moeda }}</td>
+        <td>{{ 'Cartão' if p.forma_pagamento == 'Cartao' else p.forma_pagamento }} · {{ p.status_pagamento }}</td>
+        <td><span class="status status-{{ p.status|lower|replace(' ', '-') }}">{{ p.status }}</span></td>
+        <td class="acoes">
+          {% if prox %}
+            <form method="post" action="{{ url_for('admin.avancar', pedido_id=p.id) }}">
+              <button class="btn btn-pequeno" type="submit">→ {{ prox }}</button>
+            </form>
+          {% endif %}
+          {% if p.status in ['Recebido', 'Em preparo'] %}
+            <form method="post" action="{{ url_for('admin.cancelar', pedido_id=p.id) }}" data-confirmar="Cancelar o pedido #{{ p.id }}?">
+              <button class="btn-link perigo" type="submit">Cancelar</button>
+            </form>
+          {% endif %}
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="vazio"><p>Nenhum pedido {% if status_atual %}com status "{{ status_atual }}"{% endif %}.</p></div>
+{% endif %}
+{% endblock %}

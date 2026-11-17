@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block titulo %}Cafeteria Gourmet{% endblock %} · Delivery</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+  <header class="topo">
+    <div class="container topo-conteudo">
+      <a class="marca" href="{{ url_for('loja.catalogo') }}">☕ Cafeteria Gourmet</a>
+      <button class="menu-toggle" aria-label="Abrir menu" data-toggle-menu>☰</button>
+      <nav class="menu" id="menu">
+        {% if usuario and usuario.perfil == 'admin' %}
+          <a href="{{ url_for('admin.pedidos') }}">Painel de pedidos</a>
+          <a href="{{ url_for('admin.produtos') }}">Cardápio</a>
+          <a href="{{ url_for('loja.catalogo') }}">Ver loja</a>
+        {% else %}
+          <a href="{{ url_for('loja.catalogo') }}">Cardápio</a>
+          {% if usuario %}<a href="{{ url_for('pedidos.meus_pedidos') }}">Meus pedidos</a>{% endif %}
+          <a class="btn-carrinho" href="{{ url_for('carrinho.ver') }}">🛒 Carrinho
+            {% if qtd_carrinho %}<span class="badge">{{ qtd_carrinho }}</span>{% endif %}</a>
+        {% endif %}
+        {% if usuario %}
+          <span class="ola">Olá, {{ usuario.nome.split()[0] }}</span>
+          <a href="{{ url_for('auth.logout') }}">Sair</a>
+        {% else %}
+          <a href="{{ url_for('auth.login') }}">Entrar</a>
+          <a class="btn btn-claro" href="{{ url_for('auth.cadastro') }}">Criar conta</a>
+        {% endif %}
+      </nav>
+    </div>
+  </header>
+
+  <main class="container">
+    {% with mensagens = get_flashed_messages(with_categories=true) %}
+      {% for categoria, msg in mensagens %}
+        <div class="alerta alerta-{{ categoria }}" role="status">
+          <span>{{ msg }}</span>
+          <button class="fechar" aria-label="Fechar aviso" data-fechar>×</button>
+        </div>
+      {% endfor %}
+    {% endwith %}
+    {% block conteudo %}{% endblock %}
+  </main>
+
+  <footer class="rodape">
+    <div class="container">Cafeteria Gourmet Delivery · Projeto Integrador PIT-II · Sistemas de Informação</div>
+  </footer>
+  <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+  {% block scripts %}{% endblock %}
+</body>
+</html>

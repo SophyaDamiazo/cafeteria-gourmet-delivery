@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+{% block titulo %}Cardápio{% endblock %}
+{% block conteudo %}
+<section class="hero">
+  <h1>Café especial na sua porta</h1>
+  <p>Escolha seus favoritos, pague online e acompanhe a entrega em tempo real.</p>
+</section>
+
+<form class="busca" method="get" action="{{ url_for('loja.catalogo') }}">
+  {% if categoria_atual %}<input type="hidden" name="categoria" value="{{ categoria_atual }}">{% endif %}
+  <input type="search" name="q" value="{{ busca }}" placeholder="Buscar no cardápio (ex.: cappuccino)" aria-label="Buscar produto">
+  <button class="btn" type="submit">Buscar</button>
+</form>
+
+<nav class="filtros" aria-label="Categorias">
+  <a class="chip {% if not categoria_atual %}ativo{% endif %}" href="{{ url_for('loja.catalogo', q=busca or None) }}">Todos</a>
+  {% for c in categorias %}
+    <a class="chip {% if categoria_atual == c.id %}ativo{% endif %}" href="{{ url_for('loja.catalogo', categoria=c.id, q=busca or None) }}">{{ c.icone }} {{ c.nome }}</a>
+  {% endfor %}
+</nav>
+
+{% if produtos %}
+<div class="grade">
+  {% for p in produtos %}
+  <article class="card produto">
+    <div class="produto-icone" aria-hidden="true">{{ p.icone }}</div>
+    <div class="produto-info">
+      <span class="tag">{{ p.categoria_nome }}</span>
+      <h3>{{ p.nome }}</h3>
+      <p>{{ p.descricao }}</p>
+    </div>
+    <form class="produto-acao" method="post" action="{{ url_for('carrinho.adicionar', produto_id=p.id) }}">
+      <strong class="preco">{{ p.preco|moeda }}</strong>
+      <div class="qtd-add">
+        <input type="number" name="quantidade" value="1" min="1" max="50" aria-label="Quantidade de {{ p.nome }}">
+        <button class="btn" type="submit">Adicionar</button>
+      </div>
+    </form>
+  </article>
+  {% endfor %}
+</div>
+{% else %}
+<div class="vazio">
+  <p>Nenhum produto encontrado{% if busca %} para "<strong>{{ busca }}</strong>"{% endif %}.</p>
+  <a class="btn" href="{{ url_for('loja.catalogo') }}">Ver cardápio completo</a>
+</div>
+{% endif %}
+{% endblock %}

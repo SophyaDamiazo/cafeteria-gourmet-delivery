@@ -1,0 +1,55 @@
+{% extends 'base.html' %}
+{% block titulo %}Pedido #{{ pedido.id }}{% endblock %}
+{% block conteudo %}
+<h1>Pedido #{{ pedido.id }}</h1>
+
+<div class="card" id="acompanhamento" data-pedido="{{ pedido.id }}" data-status="{{ pedido.status }}"
+     data-url="{{ url_for('pedidos.status_json', pedido_id=pedido.id) }}">
+  {% if pedido.status == 'Cancelado' %}
+    <p class="status status-cancelado">Pedido cancelado</p>
+  {% else %}
+    <ol class="linha-tempo">
+      {% set idx = fluxo.index(pedido.status) %}
+      {% for s in fluxo %}
+        <li class="{% if loop.index0 < idx %}feito{% elif loop.index0 == idx %}atual{% endif %}">{{ s }}</li>
+      {% endfor %}
+    </ol>
+    <p class="ajuda" id="status-texto">Status atual: <strong>{{ pedido.status }}</strong>. Esta página atualiza sozinha.</p>
+  {% endif %}
+</div>
+
+<div class="duas-colunas">
+  <div class="card">
+    <h2>Itens</h2>
+    <table class="tabela">
+      <thead><tr><th>Produto</th><th>Qtd.</th><th>Preço</th><th>Subtotal</th></tr></thead>
+      <tbody>
+      {% for i in itens %}
+        <tr><td>{{ i.produto_nome }}</td><td>{{ i.quantidade }}</td><td>{{ i.preco_unitario|moeda }}</td><td>{{ i.subtotal|moeda }}</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    <p><strong>Entrega em:</strong> {{ pedido.endereco_entrega }}</p>
+    {% if pedido.observacao %}<p><strong>Observação:</strong> {{ pedido.observacao }}</p>{% endif %}
+  </div>
+  <aside class="card resumo">
+    <h2>Pagamento</h2>
+    <p><span>Taxa de entrega</span><span>{{ pedido.taxa_entrega|moeda }}</span></p>
+    <p class="total"><span>Total</span><span>{{ pedido.valor_total|moeda }}</span></p>
+    {% if pagamento %}
+      <p><span>Forma</span><span>{{ 'Cartão' if pagamento.forma == 'Cartao' else pagamento.forma }}{% if pagamento.cartao_final %} •••• {{ pagamento.cartao_final }}{% endif %}</span></p>
+      <p><span>Situação</span><span>{{ pagamento.status }}</span></p>
+      {% if pagamento.codigo_transacao %}<p><span>Código</span><span>{{ pagamento.codigo_transacao }}</span></p>{% endif %}
+      {% if pagamento.troco_para %}<p><span>Troco para</span><span>{{ pagamento.troco_para|moeda }}</span></p>{% endif %}
+    {% endif %}
+    {% if pedido.status == 'Recebido' and usuario.id == pedido.usuario_id %}
+      <form method="post" action="{{ url_for('pedidos.cancelar', pedido_id=pedido.id) }}"
+            data-confirmar="Tem certeza que deseja cancelar este pedido?">
+        <button class="btn btn-perigo btn-bloco" type="submit">Cancelar pedido</button>
+      </form>
+      <p class="ajuda">Você pode cancelar enquanto o pedido não entra em preparo.</p>
+    {% endif %}
+  </aside>
+</div>
+<a href="{{ url_for('pedidos.meus_pedidos') }}">← Meus pedidos</a>
+{% endblock %}

@@ -1,0 +1,46 @@
+{% extends 'base.html' %}
+{% block titulo %}Carrinho{% endblock %}
+{% block conteudo %}
+<h1>Seu carrinho</h1>
+{% if itens %}
+<div class="duas-colunas">
+  <div class="card">
+    <table class="tabela">
+      <thead><tr><th>Produto</th><th>Preço</th><th>Qtd.</th><th>Subtotal</th><th></th></tr></thead>
+      <tbody>
+      {% for i in itens %}
+        <tr>
+          <td>{{ i.produto.icone }} {{ i.produto.nome }}</td>
+          <td>{{ i.produto.preco|moeda }}</td>
+          <td>
+            <form method="post" action="{{ url_for('carrinho.atualizar', produto_id=i.produto.id) }}" class="qtd-form">
+              <input type="number" name="quantidade" value="{{ i.quantidade }}" min="0" max="50" aria-label="Quantidade" data-auto-enviar>
+            </form>
+          </td>
+          <td>{{ i.subtotal|moeda }}</td>
+          <td>
+            <form method="post" action="{{ url_for('carrinho.remover', produto_id=i.produto.id) }}">
+              <button class="btn-link perigo" type="submit" aria-label="Remover {{ i.produto.nome }}">Remover</button>
+            </form>
+          </td>
+        </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    <a href="{{ url_for('loja.catalogo') }}">← Continuar comprando</a>
+  </div>
+  <aside class="card resumo">
+    <h2>Resumo</h2>
+    <p><span>Subtotal</span><span>{{ subtotal|moeda }}</span></p>
+    <p><span>Taxa de entrega</span><span>{{ taxa|moeda }}</span></p>
+    <p class="total"><span>Total</span><span>{{ total|moeda }}</span></p>
+    <a class="btn btn-bloco" href="{{ url_for('carrinho.checkout') }}">Finalizar pedido</a>
+  </aside>
+</div>
+{% else %}
+<div class="vazio">
+  <p>Seu carrinho está vazio.</p>
+  <a class="btn" href="{{ url_for('loja.catalogo') }}">Ver cardápio</a>
+</div>
+{% endif %}
+{% endblock %}
