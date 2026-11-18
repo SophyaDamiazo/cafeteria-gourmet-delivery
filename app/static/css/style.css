@@ -99,6 +99,16 @@ input, select, textarea {
   border: 1px solid var(--borda); border-radius: 8px; background: #fff; font-family: inherit;
 }
 input:focus, select:focus, textarea:focus { outline: 2px solid var(--destaque); border-color: transparent; }
+.campo-senha { position: relative; }
+.campo-senha input { padding-right: 46px; }
+.ver-senha {
+  position: absolute; right: 6px; top: calc(50% + 2px); transform: translateY(-50%);
+  display: flex; align-items: center; justify-content: center;
+  width: 36px; height: 36px; padding: 0; border: 0; border-radius: 6px;
+  background: none; color: var(--texto-suave); cursor: pointer;
+}
+.ver-senha:hover { color: var(--cafe); background: #f6ece0; }
+.ver-senha:focus-visible { outline: 2px solid var(--destaque); }
 label.check { display: flex; gap: 8px; align-items: center; font-weight: 400; }
 label.check input { width: auto; margin: 0; }
 .ajuda { color: var(--texto-suave); font-size: .85rem; font-weight: 400; }

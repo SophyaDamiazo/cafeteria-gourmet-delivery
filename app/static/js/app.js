@@ -21,6 +21,34 @@ document.addEventListener("DOMContentLoaded", () => {
     i.addEventListener("change", () => i.form.submit())
   );
 
+  // Botao de "olhinho" para mostrar/ocultar a senha
+  const svg = (corpo) =>
+    `<svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${corpo}</svg>`;
+  const OLHO = svg('<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>');
+  const OLHO_FECHADO = svg('<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>');
+  document.querySelectorAll('input[type="password"]').forEach((campo) => {
+    const caixa = document.createElement("div");
+    caixa.className = "campo-senha";
+    campo.parentNode.insertBefore(caixa, campo);
+    caixa.appendChild(campo);
+    const botao = document.createElement("button");
+    botao.type = "button";
+    botao.className = "ver-senha";
+    botao.innerHTML = OLHO;
+    botao.setAttribute("aria-label", "Mostrar senha");
+    botao.title = "Mostrar senha";
+    botao.addEventListener("click", (e) => {
+      e.preventDefault();
+      const mostrar = campo.type === "password";
+      campo.type = mostrar ? "text" : "password";
+      botao.innerHTML = mostrar ? OLHO_FECHADO : OLHO;
+      botao.setAttribute("aria-label", mostrar ? "Ocultar senha" : "Mostrar senha");
+      botao.title = mostrar ? "Ocultar senha" : "Mostrar senha";
+      campo.focus();
+    });
+    caixa.appendChild(botao);
+  });
+
   // Cadastro: confere se as senhas sao iguais antes de enviar
   const formCadastro = document.querySelector("form[data-validar-senha]");
   if (formCadastro) {
